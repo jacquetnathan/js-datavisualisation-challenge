@@ -148,4 +148,60 @@ options: {
 }
 });
 
+// canvas graph dynamique
+const canvas1 = document.createElement("canvas");
+canvas1.width = 800;
+canvas1.height = 400;
+const ctx1 = canvas1.getContext('2d');
+
+const title1 = document.getElementById("firstHeading");
+title1.after(canvas1);
+
+// recup les données
+
+    let dataPoints = [];
+    let chart;
+    let label = []; 
+    let colorDynamic = [];
+    $.getJSON("https://canvasjs.com/services/data/datapoints.php", function (data) {
+        $.each(data, function (key, value) {
+            dataPoints.push({ x: value[0], y: parseInt(value[1]) });
+            label.push(value[0])
+        });
+
+// graph 1 dynamic
+        chart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: label,
+                datasets: [{
+                    label: "Dynamic Chart by Nathan & Chris !",
+                    backgroundColor:colorDynamic,
+                    tension: 0,
+                    fill: false,
+                    data: dataPoints
+                }]
+            },
+
+        });
+        chart.update();
+        updateChart();
+    });
+
+    // updade des données
+    function updateChart() {
+        $.getJSON("https://canvasjs.com/services/data/datapoints.php?xstart=" + (dataPoints.length + 1) + "&ystart=" + (dataPoints[dataPoints.length - 1].y) + "&length=1&type=json", function (data) {
+            $.each(data, function (key, value) {
+                dataPoints.push({
+                    x: parseInt(value[0]),
+                    y: parseInt(value[1])
+                });
+                label.push(value[0]);
+                colorDynamic.push(getRandomColor() )
+            });
+            chart.update();
+            setTimeout(function () { updateChart() }, 1000);
+        });
+    }
+
 // Fin de la partie du code de Nathan !
