@@ -23,23 +23,41 @@ function tableToJson(table, label, index) {
 
 myTable1 = tableToJson(table1, "Country" ,1);
 myTable2 = tableToJson(table2, "country", 0);
-//console.log(myTable1)
-//console.log(myTable2)
-// console.log(myTable2)
-/* 
-for (let el in myTable2) {
-    console.log(myTable1[el]["Country"])
-    console.log(myTable1[el])
+
+// generation de couleur random
+function getRandomColor() {
+    let randomColor = Math.floor(Math.random()*16777215).toString(16);
+    let color = '#'+ randomColor;
+    return color;
 }
-*/
 
-let allCountry = [];
+// console.log(myTable2);
 
- myTable2.forEach( country =>  { allCountry.push(country.country) });
+// Début de la partie du code de Nathan !
 
-console.log(allCountry);
 
-// create canva
+// recuperation des pays dans un array
+    let allCountry = [];
+    let colorRand = [];
+    myTable2.forEach( country =>  { 
+        colorRand.push(getRandomColor());
+        allCountry.push(country.country) 
+    });
+    console.log(myTable2);
+    console.log(colorRand);
+
+// recupération données de 2009
+    let data2009 = [];
+    myTable2.forEach( country =>  { data2009.push(country['2007–09']) });
+    //console.log(data2009);
+
+
+// recupération des données de 2010
+    let data2010 = [];
+    myTable2.forEach( country =>  { data2010.push(country['2010–12']) });
+    console.log(data2010);
+
+// creation canvas pour le graph2
 const canvas = document.createElement("canvas");
     canvas.width = 800;
     canvas.height = 400;
@@ -48,30 +66,26 @@ const canvas = document.createElement("canvas");
     const title = document.getElementById("table2");
     title.before(canvas);
 
-
+// graph 2
 let myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: allCountry,
         datasets: [{
             label: '2007–09',
-            data: [50, 100, 150, 200, 250, 300, 350],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
+            data: data2009,
+            backgroundColor:
+                colorRand,
+            borderColor: 
+            colorRand,
+            borderWidth: 1
+        },{
+            label: '2010–12',
+            data: data2010,
+            backgroundColor: 
+                colorRand,
+            borderColor: 
+            colorRand,
             borderWidth: 1
         }]
     },
@@ -85,3 +99,5 @@ let myChart = new Chart(ctx, {
         }
     }
 });
+
+// Fin de la partie du code de Nathan !
