@@ -31,43 +31,38 @@ function getRandomColor() {
     return color;
 }
 
-// console.log(myTable2);
 
 // Début de la partie du code de Nathan !
 
 
-// recuperation des pays dans un array
+// recuperation des pays dans un array + couleur
     let allCountry = [];
     let colorRand = [];
     myTable2.forEach( country =>  { 
         colorRand.push(getRandomColor());
         allCountry.push(country.country) 
     });
-    console.log(myTable2);
-    console.log(colorRand);
 
 // recupération données de 2009
     let data2009 = [];
     myTable2.forEach( country =>  { data2009.push(country['2007–09']) });
-    //console.log(data2009);
 
 
 // recupération des données de 2010
     let data2010 = [];
     myTable2.forEach( country =>  { data2010.push(country['2010–12']) });
-    console.log(data2010);
 
 // creation canvas pour le graph2
-const canvas = document.createElement("canvas");
-    canvas.width = 800;
-    canvas.height = 400;
-    const ctx = canvas.getContext('2d');
+    const canvas3 = document.createElement("canvas");
+    canvas3.width = 800;
+    canvas3.height = 400;
+    const ctx3 = canvas3.getContext('2d');
 
-    const title = document.getElementById("table2");
-    title.before(canvas);
+    const title3 = document.getElementById("table2");
+    title3.before(canvas3);
 
 // graph 2
-let myChart = new Chart(ctx, {
+let myChart = new Chart(ctx3, {
     type: 'bar',
     data: {
         labels: allCountry,
@@ -100,4 +95,62 @@ let myChart = new Chart(ctx, {
     }
 });
 
+// canvas graph dynamique
+const canvas1 = document.createElement("canvas");
+canvas1.width = 800;
+canvas1.height = 400;
+const ctx1 = canvas1.getContext('2d');
+
+const title1 = document.getElementById("firstHeading");
+title1.after(canvas1);
+
+// recup les données
+
+    let dataPoints = [];
+    let chart;
+    let label = []; 
+    let colorDynamic = [];
+    $.getJSON("https://canvasjs.com/services/data/datapoints.php", function (data) {
+        $.each(data, function (key, value) {
+            dataPoints.push({ x: value[0], y: parseInt(value[1]) });
+            label.push(value[0])
+        });
+
+// graph 1 dynamic
+        chart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: label,
+                datasets: [{
+                    label: "Dynamic Chart by Nathan & Chris !",
+                    backgroundColor:colorDynamic,
+                    tension: 0,
+                    fill: false,
+                    data: dataPoints
+                }]
+            },
+
+        });
+        chart.update();
+        updateChart();
+    });
+
+    // updade des données
+    function updateChart() {
+        $.getJSON("https://canvasjs.com/services/data/datapoints.php?xstart=" + (dataPoints.length + 1) + "&ystart=" + (dataPoints[dataPoints.length - 1].y) + "&length=1&type=json", function (data) {
+            $.each(data, function (key, value) {
+                dataPoints.push({
+                    x: parseInt(value[0]),
+                    y: parseInt(value[1])
+                });
+                label.push(value[0]);
+                colorDynamic.push(getRandomColor() )
+            });
+            chart.update();
+            setTimeout(function () { updateChart() }, 1000);
+        });
+    }
+
 // Fin de la partie du code de Nathan !
+
+// colorRand.push(getRandomColor());
